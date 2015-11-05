@@ -1,0 +1,144 @@
+package in.ac.iitb.cfilt.hindiwordnet;
+
+import in.ac.iitb.cfilt.hindiwordnet.ConnectionDetector;
+
+import android.support.v7.app.ActionBarActivity;
+import android.annotation.SuppressLint;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.WindowManager;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+
+
+public class MainActivity extends ActionBarActivity {
+	
+	
+	WebView mWebView;
+	// flag for Internet connection status
+	Boolean isInternetPresent = false;
+	
+	// Connection detector class
+	ConnectionDetector cd;
+	Button button1;
+	@SuppressLint("SetJavaScriptEnabled")
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		button1 = (Button) findViewById(R.id.btn_check);
+		mWebView = (WebView) findViewById(R.id.webView1);
+		cd = new ConnectionDetector(getApplicationContext());
+		isInternetPresent = cd.isConnectingToInternet();
+		if (isInternetPresent) {
+			// Internet Connection is Present
+			// make HTTP requests
+			//showAlertDialog(AndroidDetectInternetConnectionActivity.this, "Internet Connection","You have internet connection", true);
+			button1.setVisibility(View.INVISIBLE);
+			
+			
+			if(getSupportActionBar()!=null){
+				getSupportActionBar().hide();
+			}
+			getWindow().setSoftInputMode(
+				    WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+			);
+			//WebView browser = (WebView) findViewById(R.id.webview);
+			mWebView.getSettings().setJavaScriptEnabled(true);
+			mWebView.setWebViewClient(new WebViewClient() {
+			    @Override
+			    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+			        view.loadUrl(url);
+			        return false;
+			    }
+			});
+			mWebView.loadUrl("http://www.cfilt.iitb.ac.in/MobileHindiWordnet/");
+		} else {
+			// Internet connection is not present
+			// Ask user to connect to Internet
+			
+			button1.setVisibility(View.VISIBLE);
+			
+			showAlertDialog(MainActivity.this, "No Internet Connection","You don't have internet connection.", false);
+			
+			
+		}
+		
+		button1.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				isInternetPresent = cd.isConnectingToInternet();
+				if (isInternetPresent) {
+					// Internet Connection is Present
+					// make HTTP requests
+					//showAlertDialog(AndroidDetectInternetConnectionActivity.this, "Internet Connection","You have internet connection", true);
+					//super.onCreate(savedInstanceState);
+					if(getSupportActionBar()!=null){
+						getSupportActionBar().hide();
+					}
+					getWindow().setSoftInputMode(
+						    WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+					);
+					//WebView browser = (WebView) findViewById(R.id.webview);
+					button1.setVisibility(View.INVISIBLE);
+					mWebView.getSettings().setJavaScriptEnabled(true);
+					mWebView.setWebViewClient(new WebViewClient() {
+					    @Override
+					    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+					        view.loadUrl(url);
+					        return false;
+					    }
+					});
+					mWebView.loadUrl("http://www.cfilt.iitb.ac.in/MobileHindiWordnet/");
+				} else {
+					// Internet connection is not present
+					// Ask user to connect to Internet
+					showAlertDialog(MainActivity.this, "No Internet Connection","You don't have internet connection.", false);
+				}
+				
+			}
+		});
+		
+		
+	}
+	/**
+	 * Function to display simple Alert Dialog
+	 * @param context - application context
+	 * @param title - alert dialog title
+	 * @param message - alert message
+	 * @param status - success/failure (used to set icon)
+	 * */
+	public void showAlertDialog(Context context, String title, String message, Boolean status) {
+		AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+
+		// Setting Dialog Title
+		alertDialog.setTitle(title);
+
+		// Setting Dialog Message
+		alertDialog.setMessage(message);
+		
+		// Setting alert dialog icon
+		alertDialog.setIcon((status) ? R.drawable.success : R.drawable.fail);
+
+		// Setting OK Button
+		alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		});
+
+		// Showing Alert Message
+		alertDialog.show();
+	}
+}
+	
+
+
+
