@@ -1,22 +1,25 @@
 package in.ac.iitb.cfilt.hindiwordnet;
 
 import in.ac.iitb.cfilt.hindiwordnet.ConnectionDetector;
-
 import android.support.v7.app.ActionBarActivity;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -52,12 +55,42 @@ public class MainActivity extends ActionBarActivity {
 				    WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
 			);
 			//WebView browser = (WebView) findViewById(R.id.webview);
+			WebSettings webSettings = mWebView.getSettings();
+			button1.setVisibility(View.INVISIBLE);
 			mWebView.getSettings().setJavaScriptEnabled(true);
+			//improve WebView performance priority improvement
+			mWebView.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
+			mWebView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+			mWebView.getSettings().setAppCacheEnabled(true);
+			mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+
+			webSettings.setDomStorageEnabled(true);
+			webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
+			webSettings.setUseWideViewPort(true);
+			webSettings.setSavePassword(true);
+			webSettings.setSaveFormData(true);
+			//webSettings.setEnableSmoothTransition(true); For older versions than HoneyComb deprecated, used Hardware Acceleration in Manifest XML instead
+			
 			mWebView.setWebViewClient(new WebViewClient() {
 			    @Override
 			    public boolean shouldOverrideUrlLoading(WebView view, String url) {
 			        view.loadUrl(url);
 			        return false;
+			    }
+			  //Progress Dialouge
+			    ProgressDialog pd = null;
+			    @Override
+			    public void onPageStarted(WebView view, String url, Bitmap favicon) {
+			    	pd=new ProgressDialog(MainActivity.this);
+			    	pd.setTitle("Please wait");
+			    	pd.setMessage("Civique is starting...");
+			    	pd.show();
+			    	super.onPageStarted(view, url, favicon);
+			    }
+			    @Override
+			    public void onPageFinished(WebView view, String url) {
+			    	pd.dismiss();
+			    	super.onPageFinished(view, url);;
 			    }
 			});
 			mWebView.loadUrl("http://www.cfilt.iitb.ac.in/MobileHindiWordnet/");
@@ -88,13 +121,42 @@ public class MainActivity extends ActionBarActivity {
 						    WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
 					);
 					//WebView browser = (WebView) findViewById(R.id.webview);
+					WebSettings webSettings = mWebView.getSettings();
 					button1.setVisibility(View.INVISIBLE);
 					mWebView.getSettings().setJavaScriptEnabled(true);
+					//improve WebView performance priority improvement
+					mWebView.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
+					mWebView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+					mWebView.getSettings().setAppCacheEnabled(true);
+					mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+
+					webSettings.setDomStorageEnabled(true);
+					webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
+					webSettings.setUseWideViewPort(true);
+					webSettings.setSavePassword(true);
+					webSettings.setSaveFormData(true);
+					//webSettings.setEnableSmoothTransition(true); For older versions than HoneyComb deprecated, used Hardware Acceleration in Manifest XML instead
+					
 					mWebView.setWebViewClient(new WebViewClient() {
 					    @Override
 					    public boolean shouldOverrideUrlLoading(WebView view, String url) {
 					        view.loadUrl(url);
 					        return false;
+					    }
+					  //Progress Dialouge
+					    ProgressDialog pd = null;
+					    @Override
+					    public void onPageStarted(WebView view, String url, Bitmap favicon) {
+					    	pd=new ProgressDialog(MainActivity.this);
+					    	pd.setTitle("Please wait");
+					    	pd.setMessage("Civique is starting...");
+					    	pd.show();
+					    	super.onPageStarted(view, url, favicon);
+					    }
+					    @Override
+					    public void onPageFinished(WebView view, String url) {
+					    	pd.dismiss();
+					    	super.onPageFinished(view, url);;
 					    }
 					});
 					mWebView.loadUrl("http://www.cfilt.iitb.ac.in/MobileHindiWordnet/");
@@ -106,15 +168,25 @@ public class MainActivity extends ActionBarActivity {
 				
 			}
 		});
-		
-		
+	}
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (event.getAction()==KeyEvent.ACTION_DOWN){
+			switch (keyCode) {
+			case KeyEvent.KEYCODE_BACK:
+				if (mWebView.canGoBack()) {
+					mWebView.goBack();
+				}
+				else{
+					finish();
+				}
+				return true;
+			}
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 	/**
 	 * Function to display simple Alert Dialog
-	 * @param context - application context
-	 * @param title - alert dialog title
-	 * @param message - alert message
-	 * @param status - success/failure (used to set icon)
 	 * */
 	public void showAlertDialog(Context context, String title, String message, Boolean status) {
 		AlertDialog alertDialog = new AlertDialog.Builder(context).create();
