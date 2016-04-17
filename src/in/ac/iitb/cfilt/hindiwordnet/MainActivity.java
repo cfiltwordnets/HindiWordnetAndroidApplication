@@ -83,7 +83,7 @@ public class MainActivity extends ActionBarActivity {
 			    public void onPageStarted(WebView view, String url, Bitmap favicon) {
 			    	pd=new ProgressDialog(MainActivity.this);
 			    	pd.setTitle("Please wait");
-			    	pd.setMessage("Civique is starting...");
+			    	pd.setMessage("Loading Page...");
 			    	pd.show();
 			    	super.onPageStarted(view, url, favicon);
 			    }
@@ -149,7 +149,7 @@ public class MainActivity extends ActionBarActivity {
 					    public void onPageStarted(WebView view, String url, Bitmap favicon) {
 					    	pd=new ProgressDialog(MainActivity.this);
 					    	pd.setTitle("Please wait");
-					    	pd.setMessage("Civique is starting...");
+					    	pd.setMessage("HWN is starting...");
 					    	pd.show();
 					    	super.onPageStarted(view, url, favicon);
 					    }
